@@ -1,0 +1,31 @@
+{
+  "name": "simpledht",
+  "version": "1.0.0",
+  "description": "A simple Distributed Hash Table project using NodeJs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abbyck/simple-dht.git"
+  },
+  "keywords": [
+    "dht"
+  ],
+  "author": "Abhinav Krishna C K",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abbyck/simple-dht/issues"
+  },
+  "homepage": "https://github.com/abbyck/simple-dht#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "method-override": "^3.0.0",
+    "nodemon": "^2.0.1",
+    "redis": "^2.8.0"
+  }
+}
