@@ -1,36 +1,49 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
-const redis = require('redis');
+
+const client = require('./src/middleware/connectRedis');
+const UpdateSelf = require('./src/middleware/updateTable');
+const Log = require('./src/middleware/log');
 
 const app = express();
-
-let client = redis.createClient();
-
-client.on('connect', () => {
-    console.log('connected to redis\n');
-});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(Log);
+
+// prefer POST to / for connectivity check
 app.get('/', (req, res, next) => {
-    let ip = req.ip;
-    console.log(`request to / from ${ip}\n`);
     res.json({
         status: 'connected',
     });
 });
 
-app.get('/search/:userHash', (req, res, next) => {
-	let ip = req.ip;
-	console.log(`request to /search/:userHash from ${ip}\n`);
-    let userHash = req.params.userHash;
-    console.log(ip);
-    console.log(userHash);
+//update requestee ip address in datastore for every other POST request
+app.use(UpdateSelf);
+
+//to check connection
+app.post('/', (req, res, next) => {
     res.json({
-		userHash,
-		available: ip
+        status: 'connected',
+    });
+});
+
+app.post('/search', (req, res, next) => {
+    client.hmget(req.body.searchUserid, 'ipaddr', 'lastupdated', (err, replies) => {
+        console.log(replies);
+        if (replies[0] == null || replies[1] == null) {
+            res.json({
+                status: 0,
+            });
+        } else {
+            res.json({
+                status: 1,
+                userid: req.body.searchUserid,
+                ipaddr: replies[1],
+                lastUpdated: replies[2],
+            });
+        }
     });
 });
 
